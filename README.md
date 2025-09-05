@@ -1,75 +1,179 @@
-# TypeScript Next.js Chakra example
+# Funding Arbitrage Frontend
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+A modern React/Next.js dashboard for cryptocurrency funding rate arbitrage opportunities, built with Shadcn/ui and Tailwind CSS.
 
-## Deploy your own
+## 🚀 Features
 
-Deploy the example using [Vercel](https://vercel.com):
+- **Real-time Dashboard**: Live funding rates across multiple exchanges
+- **GHZ-style Interface**: Modern, clean UI inspired by trading platforms
+- **Top Opportunities Grid**: 4 best arbitrage opportunities displayed prominently
+- **Detailed Data Table**: Sortable table with all trading pairs and rates
+- **Advanced Filters**: Filter by timeframe and exchanges
+- **Web3 Integration**: Ethereum wallet connection ready
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/vercel/next.js/tree/canary/examples/with-typescript)
+## 🛠 Tech Stack
 
-## How to use it?
+- **Framework**: Next.js 14 with App Router
+- **UI Components**: Shadcn/ui + Radix UI
+- **Styling**: Tailwind CSS with custom crypto theme
+- **Icons**: Lucide React
+- **Web3**: Ethers.js v6 (ready for integration)
+- **State Management**: Zustand (planned)
+- **WebSocket**: Socket.io-client (planned)
+- **Language**: TypeScript
 
-### Using `create-next-app`
+## 🎨 Design System
 
-Execute
-[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app)
-with [npm](https://docs.npmjs.com/cli/init) or
-[Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+### Colors
+- **Profit**: `#00D9FF` (Cyan) - For positive values
+- **Loss**: `#FF6B6B` (Red) - For negative values  
+- **Neutral**: `#8B949E` (Gray) - For neutral states
+- **Background**: Dark theme optimized for trading
 
+### Components
+- **Cards**: Hover effects and smooth transitions
+- **Tables**: Sortable with color-coded funding rates
+- **Filters**: Interactive buttons and tags
+- **Navigation**: Clean header with live indicators
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Yarn package manager
+- Alchemy API key (for Web3 functionality)
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npx create-next-app --example with-typescript with-typescript-app
-# or
-yarn create next-app --example with-typescript with-typescript-app
+yarn install
 ```
 
-### Download manually
-
-Download the example:
-
+2. Set up environment variables:
 ```bash
-curl https://codeload.github.com/vercel/next.js/tar.gz/canary | tar -xz --strip=2 next.js-canary/examples/with-typescript
-cd with-typescript
+cp .env.local.example .env.local
+# Edit .env.local with your API keys
 ```
 
-Install it and run:
-
+3. Start the development server:
 ```bash
-npm install
-npm run dev
-# or
-yarn
 yarn dev
 ```
 
-Deploy it to the cloud with
-[Vercel](https://vercel.com/import?filter=next.js&utm_source=github&utm_medium=readme&utm_campaign=next-example)
-([Documentation](https://nextjs.org/docs/deployment)).
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Notes
-
-This example shows how to integrate the TypeScript type system into Next.js.
-Since TypeScript is supported out of the box with Next.js, all we have to do is
-to install TypeScript.
+## 📁 Project Structure
 
 ```
-npm install --save-dev typescript
+├── app/                 # Next.js App Router pages
+│   ├── globals.css      # Global styles and Tailwind config
+│   ├── layout.tsx       # Root layout
+│   └── page.tsx         # Main dashboard page
+├── components/          # React components
+│   ├── ui/             # Shadcn/ui base components
+│   ├── dashboard/      # Dashboard-specific components
+│   └── layout/         # Layout components (navbar, etc.)
+├── lib/                # Utilities and configurations
+│   ├── utils/          # Utility functions and constants
+│   └── web3/          # Web3 configuration
+├── types/              # TypeScript type definitions
+└── hooks/             # Custom React hooks (planned)
 ```
 
-To enable TypeScript's features, we install the type declarations for React and
-Node.
+## 🎯 Dashboard Components
 
+### Navigation Bar
+- **Live Stats**: Shows total pairs (278), max APR (367.0%), last update time
+- **Live Indicator**: Animated dot showing real-time status
+- **Wallet Connection**: Button for Web3 wallet integration
+
+### Opportunities Grid
+- **Top 4 Cards**: Best arbitrage opportunities
+- **Exchange Rates**: Color-coded funding rates
+- **Strategy Info**: Long/Short exchange combinations  
+- **APR Display**: Large, prominent profit indicators
+- **Confidence Levels**: HIGH/MEDIUM/LOW badges
+
+### Filters Panel
+- **Timeframe Selection**: 1h, 8h, 1d buttons
+- **Exchange Toggles**: Select/deselect exchanges
+- **Active Filters**: Visual tags with remove buttons
+
+### Detailed Table
+- **Sortable Columns**: Click headers to sort by Pair or APR
+- **Exchange Columns**: Funding rates for each selected exchange
+- **Strategy Column**: Long/Short recommendations
+- **APR & Confidence**: Combined display with badges
+
+## 🔧 Configuration
+
+### Tailwind Customization
+```css
+/* Custom classes available */
+.profit-text         /* Profit color text */
+.loss-text          /* Loss color text */  
+.neutral-text       /* Neutral color text */
+.opportunity-card   /* Styled opportunity cards */
+.funding-rate-*     /* Colored funding rate badges */
 ```
-npm install --save-dev @types/react @types/react-dom @types/node
-```
 
-When we run `next dev` the next time, Next.js will start looking for any `.ts`
-or `.tsx` files in our project and builds it. It even automatically creates a
-`tsconfig.json` file for our project with the recommended settings.
+### Mock Data
+Currently uses mock data in `lib/utils/mockData.ts`:
+- **Top Opportunities**: IP, BIO, SYRUP, ZORA with realistic rates
+- **Additional Tokens**: 20+ more tokens with generated data
+- **Exchange Coverage**: Vest, Extended, Hyperliquid, Orderly
 
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for
-Next.js' modules straight away.
+## 🔌 Backend Integration
 
-A `type-check` script is also added to `package.json`, which runs TypeScript's
-`tsc` CLI in `noEmit` mode to run type-checking separately. You can then include
-this, for example, in your `test` scripts.
+Ready to connect to the [Funding Arbitrage Backend](https://github.com/rylorin/funding-arbitrage-backend):
+
+### Planned API Endpoints
+- `GET /api/exchanges/opportunities` - Funding rate data
+- `GET /api/positions` - User positions  
+- `POST /api/positions` - Create new position
+- `PUT /api/positions/:id/auto-close` - Auto-close settings
+
+### WebSocket Events
+- `funding-rates-update` - Real-time rate updates
+- `position-pnl-update` - Position P&L changes
+- `opportunity-alert` - High APR notifications
+- `position-closed` - Automatic position closures
+
+## 🎨 Style Reference
+
+The interface closely replicates the GHZ perp DEX tools aesthetic:
+- **Dark theme** with subtle borders and shadows
+- **Color-coded data** for immediate visual feedback
+- **Clean typography** with proper hierarchy
+- **Hover states** for interactive elements
+- **Smooth animations** for state changes
+
+## 📱 Responsive Design
+
+- **Mobile-first** approach with Tailwind breakpoints
+- **Grid layouts** that adapt to screen size
+- **Touch-friendly** buttons and interactions
+- **Readable text** at all sizes
+
+## 🔐 Security
+
+- **No hardcoded secrets** - All sensitive data via environment variables
+- **Web3 best practices** - Secure wallet connection patterns
+- **Type safety** - Full TypeScript coverage
+- **Sanitized inputs** - Proper data validation
+
+## 🚧 Next Steps
+
+1. **Connect to real backend** API
+2. **Implement WebSocket** real-time updates  
+3. **Add wallet connection** functionality
+4. **Position management** interface
+5. **Notifications system** for opportunities
+6. **Charts integration** with Recharts
+
+## 📄 License
+
+MIT License
