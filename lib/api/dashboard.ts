@@ -20,16 +20,28 @@ export class DashboardAPI {
 
   // Get opportunities with optional filtering
   static async getOpportunities(query?: OpportunitiesQuery): Promise<OpportunityData[]> {
-    return apiClient.get<OpportunityData[]>('/dashboard/opportunities', query);
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        opportunities: OpportunityData[];
+        summary: any;
+      };
+    }>('/dashboard/opportunities', query);
+    return response.data.opportunities;
   }
 
   // Get top opportunities (equivalent to our top 4 cards)
   static async getTopOpportunities(limit: number = 4): Promise<OpportunityData[]> {
-    return apiClient.get<OpportunityData[]>('/dashboard/opportunities', {
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        opportunities: OpportunityData[];
+        summary: any;
+      };
+    }>('/dashboard/opportunities', {
       limit,
-      // sortBy: 'apr',
-      // sortOrder: 'desc'
     });
+    return response.data.opportunities.slice(0, limit);
   }
 }
 

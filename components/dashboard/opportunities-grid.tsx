@@ -16,13 +16,37 @@ interface OpportunityCardProps {
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
   const { token, longExchange, shortExchange, longRate, shortRate, apr, confidence } = opportunity
   
-  // Handle both old and new data structures
-  const displayLongExchange = longExchange || 'hyperliquid'
-  const displayShortExchange = shortExchange || 'extended'
-  const displayLongRate = longRate ?? (opportunity as any).exchanges?.[displayLongExchange]?.rate ?? 0
-  const displayShortRate = shortRate ?? (opportunity as any).exchanges?.[displayShortExchange]?.rate ?? 0
-  const displayAPR = apr ?? (opportunity as any).bestStrategy?.apr ?? 0
-  const displayConfidence = confidence || (opportunity as any).bestStrategy?.confidence || 'MEDIUM'
+  // Handle both new API structure and old mock data structures
+  const displayLongExchange = 
+    longExchange?.name ||  // New API structure
+    longExchange as string ||  // Old structure
+    (opportunity as any).bestStrategy?.longExchange || 
+    'hyperliquid'
+  
+  const displayShortExchange = 
+    shortExchange?.name ||  // New API structure  
+    shortExchange as string ||  // Old structure
+    (opportunity as any).bestStrategy?.shortExchange || 
+    'extended'
+    
+  const displayLongRate = 
+    longExchange?.fundingRate || 
+    (longRate ?? (opportunity as any).exchanges?.[displayLongExchange]?.rate ?? 0)
+    
+  const displayShortRate = 
+    shortExchange?.fundingRate || 
+    (shortRate ?? (opportunity as any).exchanges?.[displayShortExchange]?.rate ?? 0)
+    
+  const displayAPR = 
+    parseFloat(opportunity.spread?.apr?.replace('%', '') || '0') || 
+    (apr ?? (opportunity as any).bestStrategy?.apr ?? 0)
+    
+  const displayConfidence = 
+    opportunity.metrics?.confidence ? 
+      (opportunity.metrics.confidence >= 80 ? 'HIGH' : opportunity.metrics.confidence >= 60 ? 'MEDIUM' : 'LOW') :  // New API structure (number to string)
+    confidence || 
+    (opportunity as any).bestStrategy?.confidence || 
+    'MEDIUM'
   
   const getConfidenceColor = (confidence: string) => {
     switch (confidence) {
@@ -101,8 +125,8 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
 export const OpportunitiesGrid = ({ opportunities }: OpportunitiesGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {opportunities.map((opportunity) => (
-        <OpportunityCard key={opportunity.token} opportunity={opportunity} />
+      {opportunities.map((opportunity, index) => (
+        <OpportunityCard key={opportunity.id || opportunity.token || index} opportunity={opportunity} />
       ))}
     </div>
   )

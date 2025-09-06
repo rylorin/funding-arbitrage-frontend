@@ -31,8 +31,10 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
 
   const sortedOpportunities = [...opportunities].sort((a, b) => {
     if (sortBy === 'apr') {
-      const aValue = a.bestStrategy.apr
-      const bValue = b.bestStrategy.apr
+      const aValue = parseFloat(a.spread?.apr?.replace('%', '') || '0') || 
+                     (a.apr ?? (a as any).bestStrategy?.apr ?? 0)
+      const bValue = parseFloat(b.spread?.apr?.replace('%', '') || '0') || 
+                     (b.apr ?? (b as any).bestStrategy?.apr ?? 0)
       return sortOrder === 'desc' ? bValue - aValue : aValue - bValue
     } else {
       const aValue = a.token
@@ -104,7 +106,7 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
           <tbody>
             {sortedOpportunities.map((opportunity, index) => (
               <tr
-                key={opportunity.token}
+                key={opportunity.id || opportunity.token || index}
                 className={cn(
                   "border-b border-[#21262d] hover:bg-[#21262d]/50 transition-colors",
                   index % 2 === 0 ? "bg-[#0d1117]/20" : "bg-transparent"
@@ -112,15 +114,24 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
               >
                 {/* Pair */}
                 <td className="px-4 py-3 font-medium text-white">
-                  {opportunity.pair}
+                  {opportunity.pair || `${opportunity.token}-USD`}
                 </td>
                 
                 {/* Exchange rates */}
                 {selectedExchanges.map((exchangeId) => {
-                  // Handle both old and new data structures
-                  const rate = (opportunity as any).exchanges?.[exchangeId] || 
-                              (exchangeId === opportunity.longExchange ? { rate: opportunity.longRate } :
-                               exchangeId === opportunity.shortExchange ? { rate: opportunity.shortRate } : null)
+                  // Handle new API structure
+                  let rate = null;
+                  
+                  if (opportunity.longExchange?.name?.toLowerCase() === exchangeId.toLowerCase()) {
+                    rate = { rate: opportunity.longExchange.fundingRate };
+                  } else if (opportunity.shortExchange?.name?.toLowerCase() === exchangeId.toLowerCase()) {
+                    rate = { rate: opportunity.shortExchange.fundingRate };
+                  } else {
+                    // Fallback to old structure
+                    rate = (opportunity as any).exchanges?.[exchangeId] || 
+                          (exchangeId === opportunity.longExchange ? { rate: opportunity.longRate } :
+                           exchangeId === opportunity.shortExchange ? { rate: opportunity.shortRate } : null);
+                  }
                   
                   return (
                     <td key={exchangeId} className="px-4 py-3 text-center">
@@ -144,7 +155,7 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
                 
                 {/* Strategy */}
                 <td className="px-4 py-3 text-xs text-gray-400">
-                  Long {opportunity.longExchange || (opportunity as any).bestStrategy?.longExchange || 'N/A'} • Short {opportunity.shortExchange || (opportunity as any).bestStrategy?.shortExchange || 'N/A'}
+                  Long {opportunity.longExchange?.name || opportunity.longExchange || (opportunity as any).bestStrategy?.longExchange || 'N/A'} • Short {opportunity.shortExchange?.name || opportunity.shortExchange || (opportunity as any).bestStrategy?.shortExchange || 'N/A'}
                 </td>
                 
                 {/* APR */}
@@ -152,21 +163,31 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
                   <div className="flex items-center gap-2">
                     <span className={cn(
                       "text-sm font-bold",
-                      opportunity.apr > 100 
-                        ? "text-[#00d9ff]" 
-                        : opportunity.apr > 50 
-                        ? "text-green-400" 
-                        : opportunity.apr > 20 
-                        ? "text-yellow-400" 
-                        : "text-gray-400"
+                      (() => {
+                        const aprValue = parseFloat(opportunity.spread?.apr?.replace('%', '') || '0') || 
+                                        (opportunity.apr ?? (opportunity as any).bestStrategy?.apr ?? 0);
+                        return aprValue > 100 
+                          ? "text-[#00d9ff]" 
+                          : aprValue > 50 
+                          ? "text-green-400" 
+                          : aprValue > 20 
+                          ? "text-yellow-400" 
+                          : "text-gray-400";
+                      })()
                     )}>
-                      {formatAPR(opportunity.apr)}
+                      {opportunity.spread?.apr || formatAPR(opportunity.apr ?? (opportunity as any).bestStrategy?.apr ?? 0)}
                     </span>
                     <div className={cn(
                       "px-1.5 py-0.5 rounded text-xs font-medium border",
-                      getConfidenceColor(opportunity.confidence)
+                      getConfidenceColor(
+                        opportunity.metrics?.confidence ? 
+                          (opportunity.metrics.confidence >= 80 ? 'HIGH' : opportunity.metrics.confidence >= 60 ? 'MEDIUM' : 'LOW') :
+                        (opportunity.confidence || (opportunity as any).bestStrategy?.confidence || 'MEDIUM')
+                      )
                     )}>
-                      {opportunity.confidence}
+                      {opportunity.metrics?.confidence ? 
+                        (opportunity.metrics.confidence >= 80 ? 'HIGH' : opportunity.metrics.confidence >= 60 ? 'MEDIUM' : 'LOW') :
+                      (opportunity.confidence || (opportunity as any).bestStrategy?.confidence || 'MEDIUM')}
                     </div>
                   </div>
                 </td>

@@ -28,12 +28,51 @@ export interface FundingRateData {
   volume24h?: number;
 }
 
+export interface ExchangeData {
+  name: string;
+  color: string;
+  fundingRate: number;
+  fundingRateFormatted: string;
+  price: number;
+  priceFormatted: string;
+}
+
+export interface OpportunitySpread {
+  absolute: number;
+  percent: string;
+  apr: string;
+}
+
+export interface OpportunityMetrics {
+  confidence: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  riskColor: string;
+  expectedDailyReturn: string;
+  maxSize: number;
+  maxSizeFormatted: string;
+  priceDeviation: number;
+  priceDeviationFormatted: string;
+}
+
+export interface OpportunityTiming {
+  nextFunding: string;
+  longFrequency: string;
+  shortFrequency: string;
+}
+
 export interface OpportunityData {
-  id?: string;
+  id: string;
+  rank: number;
   token: string;
-  pair: string;
-  longExchange?: string;
-  shortExchange?: string;
+  tokenIcon?: string;
+  pair?: string;
+  longExchange?: ExchangeData;
+  shortExchange?: ExchangeData;
+  spread?: OpportunitySpread;
+  metrics?: OpportunityMetrics;
+  timing?: OpportunityTiming;
+  
+  // Legacy fields for backward compatibility
   longRate?: number;
   shortRate?: number;
   apr?: number;

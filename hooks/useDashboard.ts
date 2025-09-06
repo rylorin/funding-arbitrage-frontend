@@ -70,6 +70,8 @@ export const useOpportunities = (): UseOpportunitiesResult => {
       return;
     }
 
+    console.log('Attempting to fetch real opportunities data from backend...');
+
     try {
       setLoading(true);
       setError(null);

@@ -39,14 +39,11 @@ export default function Dashboard() {
 
   // Initialize WebSocket connection and set up real-time updates
   useEffect(() => {
-    // Skip WebSocket if explicitly disabled or already initialized
-    if (process.env.NEXT_PUBLIC_SKIP_API === 'true' || wsInitialized) {
-      if (process.env.NEXT_PUBLIC_SKIP_API === 'true') {
-        console.log('WebSocket disabled - API calls disabled')
-        setWsConnectionStatus('disconnected')
-      }
-      return
-    }
+    // Skip WebSocket - focus on REST API for now
+    console.log('WebSocket disabled - using REST API only')
+    setWsConnectionStatus('disconnected')
+    setWsInitialized(true)
+    return
 
     let isMounted = true
 
@@ -170,8 +167,17 @@ export default function Dashboard() {
   // Filter opportunities based on selected exchanges
   const filteredOpportunities = useMemo(() => {
     return displayOpportunities.filter(opportunity => {
-      // For real opportunities
-      if ('longExchange' in opportunity && 'shortExchange' in opportunity) {
+      // For new API structure with objects
+      if (opportunity.longExchange?.name && opportunity.shortExchange?.name) {
+        return selectedExchanges.some(exchangeId => 
+          exchangeId.toLowerCase() === opportunity.longExchange.name.toLowerCase() ||
+          exchangeId.toLowerCase() === opportunity.shortExchange.name.toLowerCase()
+        )
+      }
+      
+      // For real opportunities with string exchanges
+      if ('longExchange' in opportunity && 'shortExchange' in opportunity && 
+          typeof opportunity.longExchange === 'string' && typeof opportunity.shortExchange === 'string') {
         return selectedExchanges.includes(opportunity.longExchange) || 
                selectedExchanges.includes(opportunity.shortExchange)
       }
