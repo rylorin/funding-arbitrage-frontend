@@ -62,29 +62,30 @@ export const ExchangeFilters = ({
             {Object.entries(EXCHANGES).map(([key, exchange]) => {
               const isSelected = selectedExchanges.includes(exchange.id)
               return (
-                <button
+                <div
                   key={key}
-                  onClick={() => toggleExchange(exchange.id)}
                   className={cn(
-                    "px-2.5 py-1 text-xs font-medium rounded transition-all",
+                    "flex items-center px-2.5 py-1 text-xs font-medium rounded transition-all",
                     isSelected
                       ? "bg-[#00d9ff]/20 text-[#00d9ff] border border-[#00d9ff]/30"
                       : "bg-[#21262d] text-gray-400 hover:bg-[#30363d] border border-[#30363d]"
                   )}
                 >
-                  {exchange.displayName}
+                  <button
+                    onClick={() => toggleExchange(exchange.id)}
+                    className="flex-1 text-left"
+                  >
+                    {exchange.displayName}
+                  </button>
                   {isSelected && (
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        removeExchange(exchange.id)
-                      }}
-                      className="ml-1 hover:text-red-400"
+                      onClick={() => removeExchange(exchange.id)}
+                      className="ml-1 hover:text-red-400 p-0.5"
                     >
                       <X size={10} />
                     </button>
                   )}
-                </button>
+                </div>
               )
             })}
           </div>

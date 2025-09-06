@@ -1,14 +1,28 @@
 export const formatPercentage = (value: number, decimals: number = 2): string => {
+  if (value === null || value === undefined || isNaN(value)) {
+    return '0.00%';
+  }
   const sign = value >= 0 ? '+' : '';
   return `${sign}${value.toFixed(decimals)}%`;
 };
 
 export const formatAPR = (value: number): string => {
+  if (value === null || value === undefined || isNaN(value)) {
+    return '0.0%';
+  }
   const sign = value >= 0 ? '+' : '';
   return `${sign}${value.toFixed(1)}%`;
 };
 
 export const formatCurrency = (value: number, currency: string = 'USD'): string => {
+  if (value === null || value === undefined || isNaN(value)) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(0);
+  }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -18,6 +32,12 @@ export const formatCurrency = (value: number, currency: string = 'USD'): string 
 };
 
 export const formatNumber = (value: number, decimals: number = 2): string => {
+  if (value === null || value === undefined || isNaN(value)) {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(0);
+  }
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,

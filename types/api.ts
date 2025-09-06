@@ -1,30 +1,65 @@
+// Generic API Response
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
+  timestamp?: string;
 }
 
-export interface FundingRate {
+// Dashboard Data Types
+export interface DashboardData {
+  totalOpportunities: number;
+  bestAPR: number;
+  averageFundingRate: number;
+  opportunities: OpportunityData[];
+  fundingRates: FundingRateData[];
+  lastUpdate: string;
+}
+
+export interface FundingRateData {
+  id: string;
+  token: string;
+  pair: string;
   exchange: string;
   rate: number;
-  timestamp: Date;
+  timestamp: string;
   isActive: boolean;
+  volume24h?: number;
 }
 
 export interface OpportunityData {
+  id?: string;
   token: string;
   pair: string;
-  exchanges: Record<string, FundingRate>;
-  bestStrategy: {
+  longExchange?: string;
+  shortExchange?: string;
+  longRate?: number;
+  shortRate?: number;
+  apr?: number;
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
+  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  minSize?: number;
+  maxSize?: number;
+  timestamp?: string;
+  userPosition?: UserPosition;
+  exchanges?: {
+    [exchangeId: string]: {
+      exchange: string;
+      rate: number;
+      timestamp: Date;
+      isActive: boolean;
+    };
+  };
+  bestStrategy?: {
     longExchange: string;
     shortExchange: string;
     apr: number;
     confidence: 'HIGH' | 'MEDIUM' | 'LOW';
   };
-  userPosition?: UserPosition;
 }
 
+// Position Data Types
 export interface UserPosition {
   id: string;
   token: string;
@@ -33,7 +68,7 @@ export interface UserPosition {
   shortExchange: string;
   size: number;
   entryPrice: number;
-  entryTimestamp: Date;
+  entryTimestamp: string;
   currentPnl: number;
   currentAPR: number;
   autoCloseEnabled: boolean;
@@ -42,27 +77,99 @@ export interface UserPosition {
     pnlThreshold: number;
   };
   status: 'OPEN' | 'CLOSING' | 'CLOSED';
+  alerts: PositionAlert[];
 }
 
+export interface PositionAlert {
+  id: string;
+  positionId: string;
+  type: 'FUNDING_CHANGE' | 'PNL_THRESHOLD' | 'SIZE_LIMIT' | 'RISK_WARNING';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  message: string;
+  timestamp: string;
+  acknowledged: boolean;
+}
+
+// Exchange Data Types
 export interface ExchangeInfo {
   id: string;
   name: string;
   displayName: string;
   isActive: boolean;
+  status: 'ONLINE' | 'OFFLINE' | 'DEGRADED';
   supportedPairs: string[];
+  lastUpdate: string;
+  apiLatency?: number;
 }
 
+export interface ExchangeStatus {
+  exchange: string;
+  status: 'CONNECTED' | 'DISCONNECTED' | 'ERROR';
+  lastPing: string;
+  latency: number;
+  errorCount: number;
+}
+
+// API Query Parameters
+export interface FundingRatesQuery {
+  token?: string;
+  exchange?: string;
+  sortBy?: 'token' | 'rate' | 'timestamp';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+export interface OpportunitiesQuery {
+  minAPR?: number;
+  maxSize?: number;
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
+  token?: string;
+  limit?: number;
+  offset?: number;
+}
+
+// WebSocket Event Types
 export interface WebSocketEvents {
-  'funding-rates-update': OpportunityData[];
-  'position-pnl-update': UserPosition[];
-  'opportunity-alert': {
-    token: string;
-    apr: number;
-    strategy: string;
+  'funding-rates-update': {
+    rates: FundingRateData[];
+    timestamp: string;
   };
+  'opportunities-update': {
+    opportunities: OpportunityData[];
+    timestamp: string;
+  };
+  'position-pnl-update': {
+    positions: UserPosition[];
+    timestamp: string;
+  };
+  'position-alert': PositionAlert;
   'position-closed': {
     positionId: string;
     reason: string;
     finalPnl: number;
+    timestamp: string;
   };
+  'exchange-status': {
+    exchanges: ExchangeStatus[];
+    timestamp: string;
+  };
+}
+
+// Authentication Types
+export interface AuthRequest {
+  walletAddress: string;
+  signature: string;
+  message: string;
+  timestamp: number;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: string;
+    walletAddress: string;
+    createdAt: string;
+  };
+  expiresAt: string;
 }

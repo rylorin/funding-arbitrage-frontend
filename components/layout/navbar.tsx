@@ -1,18 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { formatTime } from "@/lib/utils/formatters"
 
-export function Navbar() {
+interface NavbarProps {
+  wsConnectionStatus?: 'connected' | 'disconnected' | 'connecting'
+}
+
+export function Navbar({ wsConnectionStatus = 'disconnected' }: NavbarProps) {
   const [isWalletConnected, setIsWalletConnected] = useState(false)
   const [walletAddress, setWalletAddress] = useState("")
+  const [currentTime, setCurrentTime] = useState<Date | null>(null)
   
-  const currentTime = new Date()
+  // Fix hydration mismatch by setting time on client side only
+  useEffect(() => {
+    setCurrentTime(new Date())
+    
+    // Update time every minute
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 60000)
+    
+    return () => clearInterval(interval)
+  }, [])
+  
   const stats = {
     totalPairs: 278,
     maxAPR: 367.0,
-    lastUpdate: formatTime(currentTime),
+    lastUpdate: currentTime ? formatTime(currentTime) : '--:--',
   }
 
   const handleConnectWallet = () => {
@@ -48,8 +64,20 @@ export function Navbar() {
           {/* Right: Live indicator + Wallet */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="h-2 w-2 bg-[#00d9ff] rounded-full animate-pulse"></div>
-              <span className="text-xs text-[#00d9ff] font-medium">Live</span>
+              <div className={`h-2 w-2 rounded-full ${
+                wsConnectionStatus === 'connected' ? 'bg-[#00d9ff] animate-pulse' :
+                wsConnectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' :
+                'bg-red-400'
+              }`}></div>
+              <span className={`text-xs font-medium ${
+                wsConnectionStatus === 'connected' ? 'text-[#00d9ff]' :
+                wsConnectionStatus === 'connecting' ? 'text-yellow-400' :
+                'text-red-400'
+              }`}>
+                {wsConnectionStatus === 'connected' ? 'Live' :
+                 wsConnectionStatus === 'connecting' ? 'Connecting' :
+                 'Offline'}
+              </span>
             </div>
             
             {isWalletConnected && walletAddress ? (

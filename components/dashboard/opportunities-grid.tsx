@@ -14,10 +14,15 @@ interface OpportunityCardProps {
 }
 
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
-  const { token, exchanges, bestStrategy } = opportunity
+  const { token, longExchange, shortExchange, longRate, shortRate, apr, confidence } = opportunity
   
-  const longExchange = exchanges[bestStrategy.longExchange]
-  const shortExchange = exchanges[bestStrategy.shortExchange]
+  // Handle both old and new data structures
+  const displayLongExchange = longExchange || 'hyperliquid'
+  const displayShortExchange = shortExchange || 'extended'
+  const displayLongRate = longRate ?? (opportunity as any).exchanges?.[displayLongExchange]?.rate ?? 0
+  const displayShortRate = shortRate ?? (opportunity as any).exchanges?.[displayShortExchange]?.rate ?? 0
+  const displayAPR = apr ?? (opportunity as any).bestStrategy?.apr ?? 0
+  const displayConfidence = confidence || (opportunity as any).bestStrategy?.confidence || 'MEDIUM'
   
   const getConfidenceColor = (confidence: string) => {
     switch (confidence) {
@@ -52,9 +57,9 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
         <h3 className="text-xl font-bold text-white">{token}</h3>
         <div className={cn(
           "px-2 py-1 rounded text-xs font-medium border",
-          getConfidenceColor(bestStrategy.confidence)
+          getConfidenceColor(displayConfidence)
         )}>
-          {bestStrategy.confidence}
+          {displayConfidence}
         </div>
       </div>
       
@@ -62,31 +67,31 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
       <div className="space-y-2 mb-3">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-400 capitalize">
-            {bestStrategy.longExchange}
+            {displayLongExchange}
           </span>
-          <span className={cn("text-sm font-semibold", getRateColor(longExchange.rate))}>
-            {formatAPR(longExchange.rate)}
+          <span className={cn("text-sm font-semibold", getRateColor(displayLongRate))}>
+            {formatAPR(displayLongRate)}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-400 capitalize">
-            {bestStrategy.shortExchange}
+            {displayShortExchange}
           </span>
-          <span className={cn("text-sm font-semibold", getRateColor(shortExchange.rate))}>
-            {formatAPR(shortExchange.rate)}
+          <span className={cn("text-sm font-semibold", getRateColor(displayShortRate))}>
+            {formatAPR(displayShortRate)}
           </span>
         </div>
       </div>
       
       {/* Strategy description */}
       <p className="text-xs text-gray-500 mb-4">
-        Long {bestStrategy.longExchange} • Short {bestStrategy.shortExchange}
+        Long {displayLongExchange} • Short {displayShortExchange}
       </p>
       
       {/* APR */}
       <div className="flex items-center justify-end">
-        <div className={cn("text-2xl font-bold", getAPRColor(bestStrategy.apr))}>
-          {formatAPR(bestStrategy.apr)}
+        <div className={cn("text-2xl font-bold", getAPRColor(displayAPR))}>
+          {formatAPR(displayAPR)}
         </div>
       </div>
     </div>

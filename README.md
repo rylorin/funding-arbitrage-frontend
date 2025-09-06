@@ -5,7 +5,7 @@ A modern React/Next.js dashboard for cryptocurrency funding rate arbitrage oppor
 ## 🚀 Features
 
 - **Real-time Dashboard**: Live funding rates across multiple exchanges
-- **GHZ-style Interface**: Modern, clean UI inspired by trading platforms
+- **modern-style Interface**: Modern, clean UI inspired by trading platforms
 - **Top Opportunities Grid**: 4 best arbitrage opportunities displayed prominently
 - **Detailed Data Table**: Sortable table with all trading pairs and rates
 - **Advanced Filters**: Filter by timeframe and exchanges
@@ -144,7 +144,7 @@ Ready to connect to the [Funding Arbitrage Backend](https://github.com/rylorin/f
 
 ## 🎨 Style Reference
 
-The interface closely replicates the GHZ perp DEX tools aesthetic:
+The modern and aesthetic interface dedicated to perp DEX tools:
 - **Dark theme** with subtle borders and shadows
 - **Color-coded data** for immediate visual feedback
 - **Clean typography** with proper hierarchy

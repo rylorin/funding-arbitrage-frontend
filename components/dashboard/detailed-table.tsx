@@ -117,10 +117,14 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
                 
                 {/* Exchange rates */}
                 {selectedExchanges.map((exchangeId) => {
-                  const rate = opportunity.exchanges[exchangeId]
+                  // Handle both old and new data structures
+                  const rate = (opportunity as any).exchanges?.[exchangeId] || 
+                              (exchangeId === opportunity.longExchange ? { rate: opportunity.longRate } :
+                               exchangeId === opportunity.shortExchange ? { rate: opportunity.shortRate } : null)
+                  
                   return (
                     <td key={exchangeId} className="px-4 py-3 text-center">
-                      {rate ? (
+                      {rate && typeof rate.rate === 'number' ? (
                         <span className={cn(
                           "px-2 py-1 rounded text-xs font-semibold",
                           rate.rate > 0 
@@ -140,7 +144,7 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
                 
                 {/* Strategy */}
                 <td className="px-4 py-3 text-xs text-gray-400">
-                  Long {opportunity.bestStrategy.longExchange} • Short {opportunity.bestStrategy.shortExchange}
+                  Long {opportunity.longExchange || (opportunity as any).bestStrategy?.longExchange || 'N/A'} • Short {opportunity.shortExchange || (opportunity as any).bestStrategy?.shortExchange || 'N/A'}
                 </td>
                 
                 {/* APR */}
@@ -148,21 +152,21 @@ export const DetailedTable = ({ opportunities, selectedExchanges }: DetailedTabl
                   <div className="flex items-center gap-2">
                     <span className={cn(
                       "text-sm font-bold",
-                      opportunity.bestStrategy.apr > 100 
+                      opportunity.apr > 100 
                         ? "text-[#00d9ff]" 
-                        : opportunity.bestStrategy.apr > 50 
+                        : opportunity.apr > 50 
                         ? "text-green-400" 
-                        : opportunity.bestStrategy.apr > 20 
+                        : opportunity.apr > 20 
                         ? "text-yellow-400" 
                         : "text-gray-400"
                     )}>
-                      {formatAPR(opportunity.bestStrategy.apr)}
+                      {formatAPR(opportunity.apr)}
                     </span>
                     <div className={cn(
                       "px-1.5 py-0.5 rounded text-xs font-medium border",
-                      getConfidenceColor(opportunity.bestStrategy.confidence)
+                      getConfidenceColor(opportunity.confidence)
                     )}>
-                      {opportunity.bestStrategy.confidence}
+                      {opportunity.confidence}
                     </div>
                   </div>
                 </td>
