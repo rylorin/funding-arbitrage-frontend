@@ -75,9 +75,7 @@ export interface OpportunityData {
   // Legacy fields for backward compatibility
   longRate?: number;
   shortRate?: number;
-  apr?: number;
   riskLevel?: "LOW" | "MEDIUM" | "HIGH";
-  confidence?: "HIGH" | "MEDIUM" | "LOW";
   minSize?: number;
   maxSize?: number;
   timestamp?: string;
@@ -89,12 +87,6 @@ export interface OpportunityData {
       timestamp: Date;
       isActive: boolean;
     };
-  };
-  bestStrategy?: {
-    longExchange: string;
-    shortExchange: string;
-    apr: number;
-    confidence: "HIGH" | "MEDIUM" | "LOW";
   };
 }
 

@@ -3,18 +3,20 @@ export const formatPercentage = (
   decimals: number = 2
 ): string => {
   if (value === null || value === undefined || isNaN(value)) {
-    return "0.00%";
+    return "-";
   }
   const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(decimals)}%`;
+  // return `${value}`;
+  return `${sign}${(value * 100).toFixed(decimals)}%`;
 };
 
-export const formatAPR = (value: number): string => {
+export const formatAPR = (value: number, decimals = 0): string => {
   if (value === null || value === undefined || isNaN(value)) {
     return "-";
   }
   const sign = value >= 0 ? "+" : "";
-  return `${sign}${value.toFixed(1)}%`;
+  return `${sign}${value.toFixed(decimals)}%`;
+  return `${value}`;
 };
 
 export const formatCurrency = (

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import { formatAPR } from "@/lib/utils/formatters";
+import { formatPercentage } from "@/lib/utils/formatters";
 import type { OpportunityData } from "@/types/api";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -54,7 +54,6 @@ export const DetailedTable = ({
     }
   };
 
-  console.log("Opportunities:", opportunities);
   // Filter opportunities based on selected exchanges
   if (selectedExchanges.length > 0)
     opportunities = opportunities.filter(
@@ -70,12 +69,8 @@ export const DetailedTable = ({
   const sortedOpportunities: OpportunityData[] = [...opportunities].sort(
     (a, b) => {
       if (sortBy === "apr") {
-        const aValue =
-          parseFloat(a.spread?.apr?.replace("%", "") || "0") ||
-          (a.apr ?? (a as any).bestStrategy?.apr ?? 0);
-        const bValue =
-          parseFloat(b.spread?.apr?.replace("%", "") || "0") ||
-          (b.apr ?? (b as any).bestStrategy?.apr ?? 0);
+        const aValue = parseFloat(a.spread?.apr?.replace("%", "") || "0");
+        const bValue = parseFloat(b.spread?.apr?.replace("%", "") || "0");
         return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
       } else {
         const aValue = a.token;
@@ -174,22 +169,20 @@ export const DetailedTable = ({
                   let rate = null;
 
                   if (
-                    opportunity.longExchange?.name?.toLowerCase() ===
+                    opportunity.longExchange.name.toLowerCase() ===
                     exchangeId.toLowerCase()
                   ) {
                     rate = { rate: opportunity.longExchange.fundingRate };
                   } else if (
-                    opportunity.shortExchange?.name?.toLowerCase() ===
+                    opportunity.shortExchange.name.toLowerCase() ===
                     exchangeId.toLowerCase()
                   ) {
                     rate = { rate: opportunity.shortExchange.fundingRate };
                   } else {
-                    // Fallback to old structure
-                    // rate = (opportunity as any).exchanges?.[exchangeId] ||
-                    //       (exchangeId === opportunity.longExchange ? { rate: opportunity.longRate } :
-                    //        exchangeId === opportunity.shortExchange ? { rate: opportunity.shortRate } : null);
                     rate = null; // No data for this exchange
                   }
+                  if (opportunity.token == "BERA")
+                    console.log(exchangeId, opportunity.token, rate);
 
                   return (
                     <td key={exchangeId} className="px-4 py-3 text-center">
@@ -204,7 +197,7 @@ export const DetailedTable = ({
                               : "text-gray-400 bg-gray-500/20"
                           )}
                         >
-                          {formatAPR(rate.rate * rateAdjust)}
+                          {formatPercentage(rate.rate * rateAdjust, 2)}
                         </span>
                       ) : (
                         <span className="text-gray-500 text-xs">N/A</span>
@@ -215,16 +208,8 @@ export const DetailedTable = ({
 
                 {/* Strategy */}
                 <td className="px-4 py-3 text-xs text-gray-400">
-                  Long{" "}
-                  {opportunity.longExchange?.name ||
-                    opportunity.longExchange ||
-                    (opportunity as any).bestStrategy?.longExchange ||
-                    "N/A"}{" "}
-                  • Short{" "}
-                  {opportunity.shortExchange?.name ||
-                    opportunity.shortExchange ||
-                    (opportunity as any).bestStrategy?.shortExchange ||
-                    "N/A"}
+                  Long {opportunity.longExchange?.name || "N/A"} • Short{" "}
+                  {opportunity.shortExchange?.name || "N/A"}
                 </td>
 
                 {/* APR */}
@@ -234,13 +219,9 @@ export const DetailedTable = ({
                       className={cn(
                         "text-sm font-bold",
                         (() => {
-                          const aprValue =
-                            parseFloat(
-                              opportunity.spread?.apr?.replace("%", "") || "0"
-                            ) ||
-                            (opportunity.apr ??
-                              (opportunity as any).bestStrategy?.apr ??
-                              0);
+                          const aprValue = parseFloat(
+                            opportunity.spread?.apr?.replace("%", "") || "0"
+                          );
                           return aprValue > 100
                             ? "text-[#00d9ff]"
                             : aprValue > 50
@@ -263,9 +244,7 @@ export const DetailedTable = ({
                               : opportunity.metrics.confidence >= 60
                               ? "MEDIUM"
                               : "LOW"
-                            : opportunity.confidence ||
-                                (opportunity as any).bestStrategy?.confidence ||
-                                "MEDIUM"
+                            : "MEDIUM"
                         )
                       )}
                     >
@@ -275,9 +254,7 @@ export const DetailedTable = ({
                           : opportunity.metrics.confidence >= 60
                           ? "MEDIUM"
                           : "LOW"
-                        : opportunity.confidence ||
-                          (opportunity as any).bestStrategy?.confidence ||
-                          "MEDIUM"}
+                        : "MEDIUM"}
                     </div>
                   </div>
                 </td>

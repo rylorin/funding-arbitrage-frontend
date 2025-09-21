@@ -186,7 +186,7 @@ export default function Dashboard() {
 
   // Use real opportunities if available, fallback to converted funding rates
   const displayOpportunities =
-    allOpportunities.length > 0 ? allOpportunities : opportunitiesFromRates;
+    allOpportunities.length > 0 ? allOpportunities : [];
 
   // Filter opportunities based on selected exchanges
   const filteredOpportunities = useMemo(() => {
