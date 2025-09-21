@@ -54,6 +54,7 @@ export const DetailedTable = ({
     }
   };
 
+  console.log("Opportunities:", opportunities);
   // Filter opportunities based on selected exchanges
   if (selectedExchanges.length > 0)
     opportunities = opportunities.filter(
