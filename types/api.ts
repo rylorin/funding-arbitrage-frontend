@@ -45,7 +45,7 @@ export interface OpportunitySpread {
 
 export interface OpportunityMetrics {
   confidence: number;
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  riskLevel: "LOW" | "MEDIUM" | "HIGH";
   riskColor: string;
   expectedDailyReturn: string;
   maxSize: number;
@@ -66,23 +66,23 @@ export interface OpportunityData {
   token: string;
   tokenIcon?: string;
   pair?: string;
-  longExchange?: ExchangeData;
-  shortExchange?: ExchangeData;
-  spread?: OpportunitySpread;
+  longExchange: ExchangeData;
+  shortExchange: ExchangeData;
+  spread: OpportunitySpread;
   metrics?: OpportunityMetrics;
   timing?: OpportunityTiming;
-  
+
   // Legacy fields for backward compatibility
   longRate?: number;
   shortRate?: number;
   apr?: number;
-  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
-  confidence?: 'HIGH' | 'MEDIUM' | 'LOW';
+  riskLevel?: "LOW" | "MEDIUM" | "HIGH";
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
   minSize?: number;
   maxSize?: number;
   timestamp?: string;
   userPosition?: UserPosition;
-  exchanges?: {
+  exchanges: {
     [exchangeId: string]: {
       exchange: string;
       rate: number;
@@ -94,7 +94,7 @@ export interface OpportunityData {
     longExchange: string;
     shortExchange: string;
     apr: number;
-    confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+    confidence: "HIGH" | "MEDIUM" | "LOW";
   };
 }
 
@@ -115,15 +115,15 @@ export interface UserPosition {
     aprThreshold: number;
     pnlThreshold: number;
   };
-  status: 'OPEN' | 'CLOSING' | 'CLOSED';
+  status: "OPEN" | "CLOSING" | "CLOSED";
   alerts: PositionAlert[];
 }
 
 export interface PositionAlert {
   id: string;
   positionId: string;
-  type: 'FUNDING_CHANGE' | 'PNL_THRESHOLD' | 'SIZE_LIMIT' | 'RISK_WARNING';
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  type: "FUNDING_CHANGE" | "PNL_THRESHOLD" | "SIZE_LIMIT" | "RISK_WARNING";
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   message: string;
   timestamp: string;
   acknowledged: boolean;
@@ -135,7 +135,7 @@ export interface ExchangeInfo {
   name: string;
   displayName: string;
   isActive: boolean;
-  status: 'ONLINE' | 'OFFLINE' | 'DEGRADED';
+  status: "ONLINE" | "OFFLINE" | "DEGRADED";
   supportedPairs: string[];
   lastUpdate: string;
   apiLatency?: number;
@@ -143,7 +143,7 @@ export interface ExchangeInfo {
 
 export interface ExchangeStatus {
   exchange: string;
-  status: 'CONNECTED' | 'DISCONNECTED' | 'ERROR';
+  status: "CONNECTED" | "DISCONNECTED" | "ERROR";
   lastPing: string;
   latency: number;
   errorCount: number;
@@ -153,8 +153,8 @@ export interface ExchangeStatus {
 export interface FundingRatesQuery {
   token?: string;
   exchange?: string;
-  sortBy?: 'token' | 'rate' | 'timestamp';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "token" | "rate" | "timestamp";
+  sortOrder?: "asc" | "desc";
   limit?: number;
   offset?: number;
 }
@@ -162,7 +162,7 @@ export interface FundingRatesQuery {
 export interface OpportunitiesQuery {
   minAPR?: number;
   maxSize?: number;
-  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH';
+  riskLevel?: "LOW" | "MEDIUM" | "HIGH";
   token?: string;
   limit?: number;
   offset?: number;
@@ -170,26 +170,26 @@ export interface OpportunitiesQuery {
 
 // WebSocket Event Types
 export interface WebSocketEvents {
-  'funding-rates-update': {
+  "funding-rates-update": {
     rates: FundingRateData[];
     timestamp: string;
   };
-  'opportunities-update': {
+  "opportunities-update": {
     opportunities: OpportunityData[];
     timestamp: string;
   };
-  'position-pnl-update': {
+  "position-pnl-update": {
     positions: UserPosition[];
     timestamp: string;
   };
-  'position-alert': PositionAlert;
-  'position-closed': {
+  "position-alert": PositionAlert;
+  "position-closed": {
     positionId: string;
     reason: string;
     finalPnl: number;
     timestamp: string;
   };
-  'exchange-status': {
+  "exchange-status": {
     exchanges: ExchangeStatus[];
     timestamp: string;
   };

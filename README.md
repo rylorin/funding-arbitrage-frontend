@@ -26,12 +26,14 @@ A modern React/Next.js dashboard for cryptocurrency funding rate arbitrage oppor
 ## 🎨 Design System
 
 ### Colors
+
 - **Profit**: `#00D9FF` (Cyan) - For positive values
-- **Loss**: `#FF6B6B` (Red) - For negative values  
+- **Loss**: `#FF6B6B` (Red) - For negative values
 - **Neutral**: `#8B949E` (Gray) - For neutral states
 - **Background**: Dark theme optimized for trading
 
 ### Components
+
 - **Cards**: Hover effects and smooth transitions
 - **Tables**: Sortable with color-coded funding rates
 - **Filters**: Interactive buttons and tags
@@ -48,17 +50,20 @@ A modern React/Next.js dashboard for cryptocurrency funding rate arbitrage oppor
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 yarn install
 ```
 
 2. Set up environment variables:
+
 ```bash
 cp .env.local.example .env.local
 # Edit .env.local with your API keys
 ```
 
 3. Start the development server:
+
 ```bash
 yarn dev
 ```
@@ -86,23 +91,27 @@ yarn dev
 ## 🎯 Dashboard Components
 
 ### Navigation Bar
+
 - **Live Stats**: Shows total pairs (278), max APR (367.0%), last update time
 - **Live Indicator**: Animated dot showing real-time status
 - **Wallet Connection**: Button for Web3 wallet integration
 
 ### Opportunities Grid
+
 - **Top 4 Cards**: Best arbitrage opportunities
 - **Exchange Rates**: Color-coded funding rates
-- **Strategy Info**: Long/Short exchange combinations  
+- **Strategy Info**: Long/Short exchange combinations
 - **APR Display**: Large, prominent profit indicators
 - **Confidence Levels**: HIGH/MEDIUM/LOW badges
 
 ### Filters Panel
-- **Timeframe Selection**: 1h, 8h, 1d buttons
+
+- **Timeframe Selection**: 1h, 1d, 1w, 1y buttons
 - **Exchange Toggles**: Select/deselect exchanges
 - **Active Filters**: Visual tags with remove buttons
 
 ### Detailed Table
+
 - **Sortable Columns**: Click headers to sort by Pair or APR
 - **Exchange Columns**: Funding rates for each selected exchange
 - **Strategy Column**: Long/Short recommendations
@@ -111,17 +120,21 @@ yarn dev
 ## 🔧 Configuration
 
 ### Tailwind Customization
+
 ```css
 /* Custom classes available */
 .profit-text         /* Profit color text */
+/* Profit color text */
 .loss-text          /* Loss color text */  
 .neutral-text       /* Neutral color text */
 .opportunity-card   /* Styled opportunity cards */
-.funding-rate-*     /* Colored funding rate badges */
+.funding-rate-*; /* Colored funding rate badges */
 ```
 
 ### Mock Data
+
 Currently uses mock data in `lib/utils/mockData.ts`:
+
 - **Top Opportunities**: IP, BIO, SYRUP, ZORA with realistic rates
 - **Additional Tokens**: 20+ more tokens with generated data
 - **Exchange Coverage**: Vest, Extended, Hyperliquid, Orderly
@@ -131,12 +144,14 @@ Currently uses mock data in `lib/utils/mockData.ts`:
 Ready to connect to the [Funding Arbitrage Backend](https://github.com/rylorin/funding-arbitrage-backend):
 
 ### Planned API Endpoints
+
 - `GET /api/exchanges/opportunities` - Funding rate data
-- `GET /api/positions` - User positions  
+- `GET /api/positions` - User positions
 - `POST /api/positions` - Create new position
 - `PUT /api/positions/:id/auto-close` - Auto-close settings
 
 ### WebSocket Events
+
 - `funding-rates-update` - Real-time rate updates
 - `position-pnl-update` - Position P&L changes
 - `opportunity-alert` - High APR notifications
@@ -145,6 +160,7 @@ Ready to connect to the [Funding Arbitrage Backend](https://github.com/rylorin/f
 ## 🎨 Style Reference
 
 The modern and aesthetic interface dedicated to perp DEX tools:
+
 - **Dark theme** with subtle borders and shadows
 - **Color-coded data** for immediate visual feedback
 - **Clean typography** with proper hierarchy
@@ -168,7 +184,7 @@ The modern and aesthetic interface dedicated to perp DEX tools:
 ## 🚧 Next Steps
 
 1. **Connect to real backend** API
-2. **Implement WebSocket** real-time updates  
+2. **Implement WebSocket** real-time updates
 3. **Add wallet connection** functionality
 4. **Position management** interface
 5. **Notifications system** for opportunities

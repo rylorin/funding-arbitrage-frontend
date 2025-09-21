@@ -1,4 +1,21 @@
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.format": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortPackageJson": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.hg": true,
+    "**/.svn": true,
+    "**/CVS": true,
+    "dist/**": true,
+    "node_modules": true
+  },
   "typescript.tsdk": "../../node_modules/.pnpm/typescript@4.7.4/node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true
 }
