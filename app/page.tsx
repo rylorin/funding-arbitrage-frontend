@@ -104,17 +104,18 @@ export default function Dashboard() {
 
   // Calculate stats from opportunities data
   const stats = useMemo(() => {
-    const totalPairs = displayOpportunities.length;
-    const maxAPR =
-      displayOpportunities.length > 0 ? Math.max(...displayOpportunities.map((opp) => opp.spread?.apr || 0)) : 0;
+    const totalPairs = allOpportunities.length;
+    const maxAPR = Math.round(
+      allOpportunities.length > 0 ? Math.max(...allOpportunities.map((opp) => opp.spread?.apr || 0)) : 0,
+    );
     const lastUpdate = new Date();
-
+    // console.log("Stats calculated:", { totalPairs, maxAPR, lastUpdate });
     return {
       totalPairs,
       maxAPR,
       lastUpdate,
     };
-  }, [displayOpportunities]);
+  }, [allOpportunities]);
 
   // Filter opportunities based on selected exchanges
   const filteredOpportunities = useMemo(() => {
@@ -170,7 +171,7 @@ export default function Dashboard() {
   if (hasError && displayOpportunities.length === 0) {
     return (
       <div className="min-h-screen bg-[#0d1117]">
-        <Navbar wsConnectionStatus={wsConnectionStatus} onRefresh={handleRefresh} stats={stats} />
+        <Navbar wsConnectionStatus={wsConnectionStatus} onRefresh={handleRefresh} />
         <main className="mx-auto max-w-7xl px-4 py-6">
           <ErrorMessage message={`Failed to load data: ${errorMessage}`} onRetry={handleRefresh} />
         </main>
@@ -180,7 +181,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#0d1117]">
-      <Navbar wsConnectionStatus={wsConnectionStatus} onRefresh={handleRefresh} />
+      <Navbar wsConnectionStatus={wsConnectionStatus} onRefresh={handleRefresh} stats={stats} />
 
       <main className="mx-auto max-w-7xl px-4 py-6 space-y-6">
         {/* Top Opportunities Grid */}

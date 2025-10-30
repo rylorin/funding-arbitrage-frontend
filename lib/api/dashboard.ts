@@ -20,7 +20,7 @@ export class DashboardAPI {
 
   // Get opportunities with optional filtering
   static async getOpportunities(query?: OpportunitiesQuery): Promise<OpportunityData[]> {
-    console.log("getOpportunities. Fetching opportunities with query:", query);
+    // console.log("getOpportunities. Fetching opportunities with query:", query);
     const response = await apiClient.get<{
       success: boolean;
       data: {
@@ -32,7 +32,7 @@ export class DashboardAPI {
   }
 
   // Get top opportunities (equivalent to our top 4 cards)
-  static async getTopOpportunities(limit: number = 4): Promise<OpportunityData[]> {
+  static async _getTopOpportunities(limit: number = 4): Promise<OpportunityData[]> {
     const query: OpportunitiesQuery = { limit };
     return this.getOpportunities(query);
   }

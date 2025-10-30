@@ -70,7 +70,7 @@ export const useOpportunities = (): UseOpportunitiesResult => {
       return;
     }
 
-    console.log("Attempting to fetch real opportunities data from backend...");
+    // console.log("Attempting to fetch real opportunities data from backend...");
 
     try {
       setLoading(true);
@@ -79,7 +79,7 @@ export const useOpportunities = (): UseOpportunitiesResult => {
       // Fetch both all opportunities and top 4
       const [allOpportunities, topOps] = await Promise.all([
         dashboardAPI.getOpportunities({ minAPR: 5, limit: 128 }),
-        dashboardAPI.getTopOpportunities(3),
+        dashboardAPI.getOpportunities({ limit: 4 }),
       ]);
 
       setOpportunities(allOpportunities);

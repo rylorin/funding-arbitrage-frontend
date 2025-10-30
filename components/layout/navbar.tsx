@@ -5,6 +5,8 @@ import { formatTime } from "@/lib/utils/formatters";
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const refreshIntervalSeconds = 120;
+
 interface NavbarProps {
   wsConnectionStatus?: "connected" | "disconnected" | "connecting";
   onRefresh?: () => void;
@@ -18,27 +20,38 @@ interface NavbarProps {
 export function Navbar({ wsConnectionStatus = "disconnected", onRefresh, stats }: NavbarProps) {
   const [isWalletConnected, _setIsWalletConnected] = useState(false);
   const [walletAddress, _setWalletAddress] = useState("");
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [countdown, setCountdown] = useState<number>(refreshIntervalSeconds);
 
-  // Fix hydration mismatch by setting time on client side only
+  // Countdown timer for auto-refresh
   useEffect(() => {
-    setCurrentTime(new Date());
+    if (!onRefresh) return;
 
-    // Update time every minute
     const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
+      setCountdown((prevCountdown) => {
+        if (prevCountdown <= 1) {
+          onRefresh();
+          return refreshIntervalSeconds; // Reset countdown
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onRefresh]);
 
-  const defaultStats = {
-    totalPairs: 278,
-    maxAPR: 367.0,
-    lastUpdate: currentTime ? formatTime(currentTime) : "--:--",
+  const onClickRefresh = () => {
+    if (onRefresh) {
+      onRefresh();
+      setCountdown(refreshIntervalSeconds); // Reset countdown
+    }
   };
 
-  const displayStats = stats || defaultStats;
+  const displayStats = {
+    totalPairs: stats?.totalPairs || "--",
+    maxAPR: stats?.maxAPR || "--",
+    lastUpdate: stats?.lastUpdate || "--:--",
+  };
+  // console.log("render NavBar with stats:", stats, displayStats);
 
   const handleConnectWallet = () => {
     console.log("Connect wallet clicked");
@@ -64,10 +77,9 @@ export function Navbar({ wsConnectionStatus = "disconnected", onRefresh, stats }
               <span className="text-gray-300">{displayStats.totalPairs} pairs</span>
               <span className="text-gray-600">•</span>
               <span className="text-gray-300">max APR</span>
-              <span className="text-[#00d9ff] font-semibold">{displayStats.maxAPR.toFixed(1)}%</span>
+              <span className="text-[#00d9ff] font-semibold">{displayStats.maxAPR}%</span>
               <span className="text-gray-600">•</span>
               <span className="text-gray-400">
-                updated{" "}
                 {typeof displayStats.lastUpdate === "string"
                   ? displayStats.lastUpdate
                   : formatTime(displayStats.lastUpdate)}
@@ -89,13 +101,13 @@ export function Navbar({ wsConnectionStatus = "disconnected", onRefresh, stats }
               </div>
             ) : (
               <Button
-                onClick={onRefresh}
+                onClick={onClickRefresh}
                 variant="outline"
                 size="sm"
                 className="bg-transparent border border-gray-600 text-gray-400 hover:bg-gray-800 hover:text-white hover:border-gray-500 px-3 py-1.5 text-xs"
               >
                 <RefreshCw className="h-3 w-3 mr-1.5" />
-                Refresh
+                Refresh ({countdown}s)
               </Button>
             )}
 
