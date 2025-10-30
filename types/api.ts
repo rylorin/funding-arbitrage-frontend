@@ -32,26 +32,21 @@ export interface ExchangeData {
   name: string;
   color: string;
   fundingRate: number;
-  fundingRateFormatted: string;
   price: number;
-  priceFormatted: string;
 }
 
 export interface OpportunitySpread {
   absolute: number;
   percent: string;
-  apr: string;
+  apr: number;
 }
 
 export interface OpportunityMetrics {
   confidence: number;
   riskLevel: "LOW" | "MEDIUM" | "HIGH";
-  riskColor: string;
-  expectedDailyReturn: string;
   maxSize: number;
   maxSizeFormatted: string;
   priceDeviation: number;
-  priceDeviationFormatted: string;
 }
 
 export interface OpportunityTiming {
@@ -71,23 +66,6 @@ export interface OpportunityData {
   spread: OpportunitySpread;
   metrics?: OpportunityMetrics;
   timing?: OpportunityTiming;
-
-  // Legacy fields for backward compatibility
-  longRate?: number;
-  shortRate?: number;
-  riskLevel?: "LOW" | "MEDIUM" | "HIGH";
-  minSize?: number;
-  maxSize?: number;
-  timestamp?: string;
-  userPosition?: UserPosition;
-  exchanges: {
-    [exchangeId: string]: {
-      exchange: string;
-      rate: number;
-      timestamp: Date;
-      isActive: boolean;
-    };
-  };
 }
 
 // Position Data Types
@@ -153,11 +131,9 @@ export interface FundingRatesQuery {
 
 export interface OpportunitiesQuery {
   minAPR?: number;
-  maxSize?: number;
-  riskLevel?: "LOW" | "MEDIUM" | "HIGH";
+  riskLevel?: "low" | "medium" | "high";
   token?: string;
   limit?: number;
-  offset?: number;
 }
 
 // WebSocket Event Types

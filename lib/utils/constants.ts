@@ -6,16 +6,18 @@ export const EXCHANGES = {
     name: "Hyperliquid",
     displayName: "Hyperliquid",
   },
-  ORDERLY: { id: "orderly", name: "Orderly", displayName: "Orderly" },
+  ORDERLY: { id: "orderly", name: "Woofi", displayName: "Woofi" },
 } as const;
 
 export const TIMEFRAMES = {
-  "1H": { id: "1h", label: "1h", duration: 3600000 },
-  // "8H": { id: "8h", label: "8h", duration: 28800000 },
-  "1D": { id: "1d", label: "1d", duration: 86400000 },
-  "1W": { id: "1w", label: "1w", duration: 86400000 * 7 },
-  "1Y": { id: "1y", label: "1y", duration: 86400000 * 365 },
+  "1H": { id: "1H", label: "1h", hours: 1, duration: 3600_000 },
+  "4H": { id: "4H", label: "4h", hours: 4, duration: 14400_000 },
+  "8H": { id: "8H", label: "8h", hours: 8, duration: 28800_000 },
+  "1D": { id: "1D", label: "1d", hours: 24, duration: 86_400_000 },
+  "1W": { id: "1W", label: "1w", hours: 24 * 7, duration: 86_400_000 * 7 },
+  "1Y": { id: "1Y", label: "1y", hours: 24 * 365, duration: 86_400_000 * 365 },
 } as const;
+export type TimeframeKey = keyof typeof TIMEFRAMES;
 
 export const API_ENDPOINTS = {
   AUTH: "/api/auth",

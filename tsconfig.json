@@ -4,8 +4,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "lib": ["dom", "esnext"],
+    "jsx": "react-jsx",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
@@ -18,12 +21,27 @@
     "target": "esnext",
     "allowSyntheticDefaultImports": true,
     "incremental": true,
-    "customConditions": ["dev"],
-    "plugins": [{ "name": "next" }],
+    "customConditions": [
+      "dev"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-  "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
 }

@@ -13,29 +13,20 @@ interface OpportunityCardProps {
 }
 
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
-  const { token, longExchange, shortExchange, longRate, shortRate } =
-    opportunity;
+  const { token, longExchange, shortExchange } = opportunity;
+  // const longRate =longExchange?.fundingRate;
+  // const shortRate =shortExchange?.fundingRate;
 
   // Handle both new API structure and old mock data structures
   const displayLongExchange = longExchange?.name || "N/A";
 
   const displayShortExchange = shortExchange?.name || "N/A";
 
-  const displayLongRate =
-    longExchange?.fundingRate ||
-    (longRate ??
-      (opportunity as any).exchanges?.[displayLongExchange]?.rate ??
-      0);
+  const displayLongRate = longExchange?.fundingRate || 0;
 
-  const displayShortRate =
-    shortExchange?.fundingRate ||
-    (shortRate ??
-      (opportunity as any).exchanges?.[displayShortExchange]?.rate ??
-      0);
+  const displayShortRate = shortExchange?.fundingRate || 0;
 
-  const displayAPR = parseFloat(
-    opportunity.spread?.apr?.replace("%", "") || "0"
-  );
+  const displayAPR = opportunity.spread?.apr || 0;
 
   const displayConfidence = opportunity.metrics?.confidence
     ? opportunity.metrics.confidence >= 80

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
+import { TimeframeKey, TIMEFRAMES } from "@/lib/utils/constants";
 import { formatPercentage } from "@/lib/utils/formatters";
 import type { OpportunityData } from "@/types/api";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -10,7 +11,7 @@ import { useState } from "react";
 interface DetailedTableProps {
   opportunities: OpportunityData[];
   selectedExchanges: string[];
-  timeframe: string;
+  timeframe: TimeframeKey;
 }
 
 type SortField = "token" | "apr";
@@ -21,26 +22,7 @@ export const DetailedTable = ({
   selectedExchanges,
   timeframe,
 }: DetailedTableProps) => {
-  let rateAdjust: number;
-  switch (timeframe) {
-    case "1h":
-      rateAdjust = 1;
-      break;
-    case "8h":
-      rateAdjust = 8;
-      break;
-    case "1d":
-      rateAdjust = 24;
-      break;
-    case "1w":
-      rateAdjust = 24 * 7;
-      break;
-    case "1y":
-      rateAdjust = 24 * 365;
-      break;
-    default:
-      rateAdjust = 1;
-  }
+  const rateAdjust: number = TIMEFRAMES[timeframe].hours; // Adjust to hourly funding rate
 
   const [sortBy, setSortBy] = useState<SortField>("apr");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
@@ -69,8 +51,8 @@ export const DetailedTable = ({
   const sortedOpportunities: OpportunityData[] = [...opportunities].sort(
     (a, b) => {
       if (sortBy === "apr") {
-        const aValue = parseFloat(a.spread?.apr?.replace("%", "") || "0");
-        const bValue = parseFloat(b.spread?.apr?.replace("%", "") || "0");
+        const aValue = a.spread?.apr || 0;
+        const bValue = b.spread?.apr || 0;
         return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
       } else {
         const aValue = a.token;
@@ -133,14 +115,26 @@ export const DetailedTable = ({
               <th className="px-4 py-3 text-left font-medium text-gray-300">
                 <SortButton field="token">Pair</SortButton>
               </th>
-              {selectedExchanges.map((exchangeId) => (
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
+                Long
+              </th>
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
+                Rate ({TIMEFRAMES[timeframe].label})
+              </th>
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
+                Short
+              </th>
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
+                Rate ({TIMEFRAMES[timeframe].label})
+              </th>
+              {/* {selectedExchanges.map((exchangeId) => (
                 <th
                   key={exchangeId}
                   className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]"
                 >
-                  {exchangeId} ({timeframe})
+                  {exchangeId} ({TIMEFRAMES[timeframe].label})
                 </th>
-              ))}
+              ))} */}
               <th className="px-4 py-3 text-left font-medium text-gray-300 min-w-[180px]">
                 Strategy
               </th>
@@ -160,11 +154,74 @@ export const DetailedTable = ({
               >
                 {/* Pair */}
                 <td className="px-4 py-3 font-medium text-white">
-                  {opportunity.pair || `${opportunity.token}-USD`}
+                  {opportunity.pair || `${opportunity.token}`}
                 </td>
 
                 {/* Exchange rates */}
-                {selectedExchanges.map((exchangeId) => {
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded text-xs font-semibold",
+                      opportunity.longExchange.fundingRate > 0
+                        ? "text-green-400 bg-green-500/20"
+                        : opportunity.longExchange.fundingRate < 0
+                        ? "text-red-400 bg-red-500/20"
+                        : "text-gray-400 bg-gray-500/20"
+                    )}
+                  >
+                    {opportunity.longExchange.name}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded text-xs font-semibold",
+                      opportunity.longExchange.fundingRate > 0
+                        ? "text-green-400 bg-green-500/20"
+                        : opportunity.longExchange.fundingRate < 0
+                        ? "text-red-400 bg-red-500/20"
+                        : "text-gray-400 bg-gray-500/20"
+                    )}
+                  >
+                    {formatPercentage(
+                      opportunity.longExchange.fundingRate * rateAdjust,
+                      2
+                    )}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded text-xs font-semibold",
+                      opportunity.shortExchange.fundingRate > 0
+                        ? "text-green-400 bg-green-500/20"
+                        : opportunity.shortExchange.fundingRate < 0
+                        ? "text-red-400 bg-red-500/20"
+                        : "text-gray-400 bg-gray-500/20"
+                    )}
+                  >
+                    {opportunity.shortExchange.name}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded text-xs font-semibold",
+                      opportunity.shortExchange.fundingRate > 0
+                        ? "text-green-400 bg-green-500/20"
+                        : opportunity.shortExchange.fundingRate < 0
+                        ? "text-red-400 bg-red-500/20"
+                        : "text-gray-400 bg-gray-500/20"
+                    )}
+                  >
+                    {formatPercentage(
+                      opportunity.shortExchange.fundingRate * rateAdjust,
+                      2
+                    )}
+                  </span>
+                </td>
+
+                {/* {selectedExchanges.map((exchangeId) => {
                   // Handle new API structure
                   let rate = null;
 
@@ -181,8 +238,8 @@ export const DetailedTable = ({
                   } else {
                     rate = null; // No data for this exchange
                   }
-                  if (opportunity.token == "BERA")
-                    console.log(exchangeId, opportunity.token, rate);
+                  // if (opportunity.token == "BIO")
+                  //   console.log(exchangeId, opportunity.token, rate);
 
                   return (
                     <td key={exchangeId} className="px-4 py-3 text-center">
@@ -204,7 +261,7 @@ export const DetailedTable = ({
                       )}
                     </td>
                   );
-                })}
+                })} */}
 
                 {/* Strategy */}
                 <td className="px-4 py-3 text-xs text-gray-400">
@@ -219,9 +276,7 @@ export const DetailedTable = ({
                       className={cn(
                         "text-sm font-bold",
                         (() => {
-                          const aprValue = parseFloat(
-                            opportunity.spread?.apr?.replace("%", "") || "0"
-                          );
+                          const aprValue = opportunity.spread?.apr || 0;
                           return aprValue > 100
                             ? "text-[#00d9ff]"
                             : aprValue > 50
@@ -232,7 +287,7 @@ export const DetailedTable = ({
                         })()
                       )}
                     >
-                      {opportunity.spread.apr}
+                      {opportunity.spread.apr.toFixed()}%
                     </span>
                     <div
                       className={cn(
