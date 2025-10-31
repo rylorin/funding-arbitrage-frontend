@@ -2,14 +2,14 @@
 
 import { cn } from "@/lib/utils/cn";
 import { formatAPR } from "@/lib/utils/formatters";
-import type { OpportunityData } from "@/types/api";
+import type { ArbitrageOpportunityData } from "@/types/api";
 
 interface OpportunitiesGridProps {
-  opportunities: OpportunityData[];
+  opportunities: ArbitrageOpportunityData[];
 }
 
 interface OpportunityCardProps {
-  opportunity: OpportunityData;
+  opportunity: ArbitrageOpportunityData;
 }
 
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
@@ -28,12 +28,12 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
 
   const displayAPR = opportunity.spread?.apr || 0;
 
-  const displayConfidence = opportunity.metrics?.confidence
-    ? opportunity.metrics.confidence >= 80
+  const displayConfidence = opportunity.risk?.score
+    ? opportunity.risk.score >= 80
       ? "HIGH"
-      : opportunity.metrics.confidence >= 60
-      ? "MEDIUM"
-      : "LOW" // New API structure (number to string)
+      : opportunity.risk.score >= 60
+        ? "MEDIUM"
+        : "LOW" // New API structure (number to string)
     : "MEDIUM";
 
   const getConfidenceColor = (confidence: string) => {
@@ -67,12 +67,7 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
       {/* Token name */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold text-white">{token}</h3>
-        <div
-          className={cn(
-            "px-2 py-1 rounded text-xs font-medium border",
-            getConfidenceColor(displayConfidence)
-          )}
-        >
+        <div className={cn("px-2 py-1 rounded text-xs font-medium border", getConfidenceColor(displayConfidence))}>
           {displayConfidence}
         </div>
       </div>
@@ -80,28 +75,14 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
       {/* Exchange rates */}
       <div className="space-y-2 mb-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400 capitalize">
-            {displayLongExchange}
-          </span>
-          <span
-            className={cn(
-              "text-sm font-semibold",
-              getRateColor(displayLongRate)
-            )}
-          >
+          <span className="text-sm text-gray-400 capitalize">{displayLongExchange}</span>
+          <span className={cn("text-sm font-semibold", getRateColor(displayLongRate))}>
             {formatAPR(displayLongRate)}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400 capitalize">
-            {displayShortExchange}
-          </span>
-          <span
-            className={cn(
-              "text-sm font-semibold",
-              getRateColor(displayShortRate)
-            )}
-          >
+          <span className="text-sm text-gray-400 capitalize">{displayShortExchange}</span>
+          <span className={cn("text-sm font-semibold", getRateColor(displayShortRate))}>
             {formatAPR(displayShortRate)}
           </span>
         </div>
@@ -114,24 +95,17 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
 
       {/* APR */}
       <div className="flex items-center justify-end">
-        <div className={cn("text-2xl font-bold", getAPRColor(displayAPR))}>
-          {formatAPR(displayAPR)}
-        </div>
+        <div className={cn("text-2xl font-bold", getAPRColor(displayAPR))}>{formatAPR(displayAPR)}</div>
       </div>
     </div>
   );
 };
 
-export const OpportunitiesGrid = ({
-  opportunities,
-}: OpportunitiesGridProps) => {
+export const OpportunitiesGrid = ({ opportunities }: OpportunitiesGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {opportunities.map((opportunity, index) => (
-        <OpportunityCard
-          key={opportunity.id || opportunity.token || index}
-          opportunity={opportunity}
-        />
+        <OpportunityCard key={opportunity.id || opportunity.token || index} opportunity={opportunity} />
       ))}
     </div>
   );

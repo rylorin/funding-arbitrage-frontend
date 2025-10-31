@@ -6,7 +6,7 @@ export const EXCHANGES = {
     name: "Hyperliquid",
     displayName: "Hyperliquid",
   },
-  ORDERLY: { id: "orderly", name: "Woofi", displayName: "Woofi" },
+  ORDERLY: { id: "orderly", name: "Orderly", displayName: "Orderly" },
 } as const;
 
 export const TIMEFRAMES = {

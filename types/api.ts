@@ -12,7 +12,7 @@ export interface DashboardData {
   totalOpportunities: number;
   bestAPR: number;
   averageFundingRate: number;
-  opportunities: OpportunityData[];
+  opportunities: ArbitrageOpportunityData[];
   fundingRates: FundingRateData[];
   lastUpdate: string;
 }
@@ -28,22 +28,18 @@ export interface FundingRateData {
   volume24h?: number;
 }
 
-export interface ExchangeData {
-  name: string;
-  color: string;
-  fundingRate: number;
-  price: number;
-}
+type ExchangeName = string;
+type TokenSymbol = string;
+type RiskLevel = "low" | "medium" | "high";
 
 export interface OpportunitySpread {
   absolute: number;
-  percent: string;
   apr: number;
 }
 
 export interface OpportunityMetrics {
   confidence: number;
-  riskLevel: "LOW" | "MEDIUM" | "HIGH";
+  riskLevel: RiskLevel;
   maxSize: number;
   maxSizeFormatted: string;
   priceDeviation: number;
@@ -55,17 +51,32 @@ export interface OpportunityTiming {
   shortFrequency: string;
 }
 
-export interface OpportunityData {
+export interface ExchangeData {
+  name: ExchangeName;
+  fundingRate: number;
+  fundingFrequency: number;
+  price: number;
+}
+
+export interface RiskAssessment {
+  level: RiskLevel;
+  score: number; // 0-100 composite score
+  factors: {
+    priceDeviation: number; // % price difference between exchanges
+    spreadQuality: number; // Quality of funding rate spread
+    exchangeReliability: number; // 0.5 for new exchanges, 1.0 for established
+  };
+}
+
+export interface ArbitrageOpportunityData {
   id: string;
-  rank: number;
-  token: string;
-  tokenIcon?: string;
-  pair?: string;
+  token: TokenSymbol;
+  tokenIcon: string;
   longExchange: ExchangeData;
   shortExchange: ExchangeData;
   spread: OpportunitySpread;
-  metrics?: OpportunityMetrics;
-  timing?: OpportunityTiming;
+  risk: RiskAssessment;
+  timing: OpportunityTiming;
 }
 
 // Position Data Types
@@ -143,7 +154,7 @@ export interface WebSocketEvents {
     timestamp: string;
   };
   "opportunities-update": {
-    opportunities: OpportunityData[];
+    opportunities: ArbitrageOpportunityData[];
     timestamp: string;
   };
   "position-pnl-update": {

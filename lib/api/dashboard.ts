@@ -1,9 +1,9 @@
 import type {
+  ArbitrageOpportunityData,
   DashboardData,
   FundingRateData,
   FundingRatesQuery,
   OpportunitiesQuery,
-  OpportunityData,
 } from "@/types/api";
 import { apiClient } from "./client";
 
@@ -19,22 +19,15 @@ export class DashboardAPI {
   }
 
   // Get opportunities with optional filtering
-  static async getOpportunities(query?: OpportunitiesQuery): Promise<OpportunityData[]> {
-    // console.log("getOpportunities. Fetching opportunities with query:", query);
+  static async getOpportunities(query?: OpportunitiesQuery): Promise<ArbitrageOpportunityData[]> {
     const response = await apiClient.get<{
       success: boolean;
       data: {
-        opportunities: OpportunityData[];
+        opportunities: ArbitrageOpportunityData[];
         summary: any;
       };
     }>("/dashboard/opportunities", query);
     return response.data.opportunities;
-  }
-
-  // Get top opportunities (equivalent to our top 4 cards)
-  static async _getTopOpportunities(limit: number = 4): Promise<OpportunityData[]> {
-    const query: OpportunitiesQuery = { limit };
-    return this.getOpportunities(query);
   }
 }
 

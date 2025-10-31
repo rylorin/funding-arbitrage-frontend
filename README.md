@@ -127,7 +127,7 @@ yarn dev
 /* Profit color text */
 /* Profit color text */
 /* Profit color text */
-.loss-text          /* Loss color text */  
+.loss-text          /* Loss color text */
 .neutral-text       /* Neutral color text */
 .opportunity-card   /* Styled opportunity cards */
 .funding-rate-*; /* Colored funding rate badges */
@@ -139,7 +139,7 @@ Currently uses mock data in `lib/utils/mockData.ts`:
 
 - **Top Opportunities**: IP, BIO, SYRUP, ZORA with realistic rates
 - **Additional Tokens**: 20+ more tokens with generated data
-- **Exchange Coverage**: Vest, Extended, Hyperliquid, Woofi
+- **Exchange Coverage**: Vest, Extended, Hyperliquid, Orderly
 
 ## 🔌 Backend Integration
 

@@ -78,7 +78,7 @@ export const useOpportunities = (): UseOpportunitiesResult => {
 
       // Fetch both all opportunities and top 4
       const [allOpportunities, topOps] = await Promise.all([
-        dashboardAPI.getOpportunities({ minAPR: 5, limit: 128 }),
+        dashboardAPI.getOpportunities({ minAPR: 5, limit: 256 }),
         dashboardAPI.getOpportunities({ limit: 4 }),
       ]);
 

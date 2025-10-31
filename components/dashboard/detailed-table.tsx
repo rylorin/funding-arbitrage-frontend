@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { TimeframeKey, TIMEFRAMES } from "@/lib/utils/constants";
 import { formatPercentage } from "@/lib/utils/formatters";
-import type { OpportunityData } from "@/types/api";
+import type { ArbitrageOpportunityData } from "@/types/api";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
 interface DetailedTableProps {
-  opportunities: OpportunityData[];
+  opportunities: ArbitrageOpportunityData[];
   selectedExchanges: string[];
   timeframe: TimeframeKey;
 }
@@ -17,11 +17,7 @@ interface DetailedTableProps {
 type SortField = "token" | "apr";
 type SortOrder = "asc" | "desc";
 
-export const DetailedTable = ({
-  opportunities,
-  selectedExchanges,
-  timeframe,
-}: DetailedTableProps) => {
+export const DetailedTable = ({ opportunities, selectedExchanges, timeframe }: DetailedTableProps) => {
   const rateAdjust: number = TIMEFRAMES[timeframe].hours; // Adjust to hourly funding rate
 
   const [sortBy, setSortBy] = useState<SortField>("apr");
@@ -40,37 +36,23 @@ export const DetailedTable = ({
   if (selectedExchanges.length > 0)
     opportunities = opportunities.filter(
       (opportunity) =>
-        selectedExchanges.findIndex(
-          (item) => item == opportunity.longExchange.name.toLowerCase()
-        ) >= 0 &&
-        selectedExchanges.findIndex(
-          (item) => item == opportunity.shortExchange.name.toLowerCase()
-        ) >= 0
+        selectedExchanges.findIndex((item) => item == opportunity.longExchange.name.toLowerCase()) >= 0 &&
+        selectedExchanges.findIndex((item) => item == opportunity.shortExchange.name.toLowerCase()) >= 0,
     );
 
-  const sortedOpportunities: OpportunityData[] = [...opportunities].sort(
-    (a, b) => {
-      if (sortBy === "apr") {
-        const aValue = a.spread?.apr || 0;
-        const bValue = b.spread?.apr || 0;
-        return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
-      } else {
-        const aValue = a.token;
-        const bValue = b.token;
-        return sortOrder === "desc"
-          ? bValue.localeCompare(aValue)
-          : aValue.localeCompare(bValue);
-      }
+  const sortedOpportunities: ArbitrageOpportunityData[] = [...opportunities].sort((a, b) => {
+    if (sortBy === "apr") {
+      const aValue = a.spread?.apr || 0;
+      const bValue = b.spread?.apr || 0;
+      return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
+    } else {
+      const aValue = a.token;
+      const bValue = b.token;
+      return sortOrder === "desc" ? bValue.localeCompare(aValue) : aValue.localeCompare(bValue);
     }
-  );
+  });
 
-  const SortButton = ({
-    field,
-    children,
-  }: {
-    field: SortField;
-    children: React.ReactNode;
-  }) => (
+  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <Button
       variant="ghost"
       size="sm"
@@ -79,12 +61,7 @@ export const DetailedTable = ({
     >
       <div className="flex items-center gap-1">
         {children}
-        {sortBy === field &&
-          (sortOrder === "desc" ? (
-            <ChevronDown size={14} />
-          ) : (
-            <ChevronUp size={14} />
-          ))}
+        {sortBy === field && (sortOrder === "desc" ? <ChevronDown size={14} /> : <ChevronUp size={14} />)}
       </div>
     </Button>
   );
@@ -115,29 +92,15 @@ export const DetailedTable = ({
               <th className="px-4 py-3 text-left font-medium text-gray-300">
                 <SortButton field="token">Pair</SortButton>
               </th>
-              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
-                Long
-              </th>
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">Long</th>
               <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
                 Rate ({TIMEFRAMES[timeframe].label})
               </th>
-              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
-                Short
-              </th>
+              <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">Short</th>
               <th className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]">
                 Rate ({TIMEFRAMES[timeframe].label})
               </th>
-              {/* {selectedExchanges.map((exchangeId) => (
-                <th
-                  key={exchangeId}
-                  className="px-4 py-3 text-center font-medium text-gray-300 capitalize min-w-[100px]"
-                >
-                  {exchangeId} ({TIMEFRAMES[timeframe].label})
-                </th>
-              ))} */}
-              <th className="px-4 py-3 text-left font-medium text-gray-300 min-w-[180px]">
-                Strategy
-              </th>
+              <th className="px-4 py-3 text-left font-medium text-gray-300 min-w-[180px]">Strategy</th>
               <th className="px-4 py-3 text-left font-medium text-gray-300">
                 <SortButton field="apr">APR (1y)</SortButton>
               </th>
@@ -149,24 +112,22 @@ export const DetailedTable = ({
                 key={opportunity.id || opportunity.token || index}
                 className={cn(
                   "border-b border-[#21262d] hover:bg-[#21262d]/50 transition-colors",
-                  index % 2 === 0 ? "bg-[#0d1117]/20" : "bg-transparent"
+                  index % 2 === 0 ? "bg-[#0d1117]/20" : "bg-transparent",
                 )}
               >
                 {/* Pair */}
-                <td className="px-4 py-3 font-medium text-white">
-                  {opportunity.pair || `${opportunity.token}`}
-                </td>
+                <td className="px-4 py-3 font-medium text-white">{opportunity.token}</td>
 
                 {/* Exchange rates */}
                 <td className="px-4 py-3 text-center">
                   <span
                     className={cn(
-                      "px-2 py-1 rounded text-xs font-semibold",
+                      "px-2 py-1 rounded text-xs font-semibold capitalize",
                       opportunity.longExchange.fundingRate > 0
                         ? "text-green-400 bg-green-500/20"
                         : opportunity.longExchange.fundingRate < 0
-                        ? "text-red-400 bg-red-500/20"
-                        : "text-gray-400 bg-gray-500/20"
+                          ? "text-red-400 bg-red-500/20"
+                          : "text-gray-400 bg-gray-500/20",
                     )}
                   >
                     {opportunity.longExchange.name}
@@ -179,25 +140,22 @@ export const DetailedTable = ({
                       opportunity.longExchange.fundingRate > 0
                         ? "text-green-400 bg-green-500/20"
                         : opportunity.longExchange.fundingRate < 0
-                        ? "text-red-400 bg-red-500/20"
-                        : "text-gray-400 bg-gray-500/20"
+                          ? "text-red-400 bg-red-500/20"
+                          : "text-gray-400 bg-gray-500/20",
                     )}
                   >
-                    {formatPercentage(
-                      opportunity.longExchange.fundingRate * rateAdjust,
-                      2
-                    )}
+                    {formatPercentage(opportunity.longExchange.fundingRate * rateAdjust, 2)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center">
                   <span
                     className={cn(
-                      "px-2 py-1 rounded text-xs font-semibold",
+                      "px-2 py-1 rounded text-xs font-semibold capitalize",
                       opportunity.shortExchange.fundingRate > 0
                         ? "text-green-400 bg-green-500/20"
                         : opportunity.shortExchange.fundingRate < 0
-                        ? "text-red-400 bg-red-500/20"
-                        : "text-gray-400 bg-gray-500/20"
+                          ? "text-red-400 bg-red-500/20"
+                          : "text-gray-400 bg-gray-500/20",
                     )}
                   >
                     {opportunity.shortExchange.name}
@@ -210,62 +168,17 @@ export const DetailedTable = ({
                       opportunity.shortExchange.fundingRate > 0
                         ? "text-green-400 bg-green-500/20"
                         : opportunity.shortExchange.fundingRate < 0
-                        ? "text-red-400 bg-red-500/20"
-                        : "text-gray-400 bg-gray-500/20"
+                          ? "text-red-400 bg-red-500/20"
+                          : "text-gray-400 bg-gray-500/20",
                     )}
                   >
-                    {formatPercentage(
-                      opportunity.shortExchange.fundingRate * rateAdjust,
-                      2
-                    )}
+                    {formatPercentage(opportunity.shortExchange.fundingRate * rateAdjust, 2)}
                   </span>
                 </td>
 
-                {/* {selectedExchanges.map((exchangeId) => {
-                  // Handle new API structure
-                  let rate = null;
-
-                  if (
-                    opportunity.longExchange.name.toLowerCase() ===
-                    exchangeId.toLowerCase()
-                  ) {
-                    rate = { rate: opportunity.longExchange.fundingRate };
-                  } else if (
-                    opportunity.shortExchange.name.toLowerCase() ===
-                    exchangeId.toLowerCase()
-                  ) {
-                    rate = { rate: opportunity.shortExchange.fundingRate };
-                  } else {
-                    rate = null; // No data for this exchange
-                  }
-                  // if (opportunity.token == "BIO")
-                  //   console.log(exchangeId, opportunity.token, rate);
-
-                  return (
-                    <td key={exchangeId} className="px-4 py-3 text-center">
-                      {rate && typeof rate.rate === "number" ? (
-                        <span
-                          className={cn(
-                            "px-2 py-1 rounded text-xs font-semibold",
-                            rate.rate > 0
-                              ? "text-green-400 bg-green-500/20"
-                              : rate.rate < 0
-                              ? "text-red-400 bg-red-500/20"
-                              : "text-gray-400 bg-gray-500/20"
-                          )}
-                        >
-                          {formatPercentage(rate.rate * rateAdjust, 2)}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500 text-xs">N/A</span>
-                      )}
-                    </td>
-                  );
-                })} */}
-
                 {/* Strategy */}
                 <td className="px-4 py-3 text-xs text-gray-400">
-                  Long {opportunity.longExchange?.name || "N/A"} • Short{" "}
+                  Long {opportunity.longExchange?.name || "N/A"} • Short
                   {opportunity.shortExchange?.name || "N/A"}
                 </td>
 
@@ -280,11 +193,11 @@ export const DetailedTable = ({
                           return aprValue > 100
                             ? "text-[#00d9ff]"
                             : aprValue > 50
-                            ? "text-green-400"
-                            : aprValue > 20
-                            ? "text-yellow-400"
-                            : "text-gray-400";
-                        })()
+                              ? "text-green-400"
+                              : aprValue > 20
+                                ? "text-yellow-400"
+                                : "text-gray-400";
+                        })(),
                       )}
                     >
                       {opportunity.spread.apr.toFixed()}%
@@ -293,22 +206,22 @@ export const DetailedTable = ({
                       className={cn(
                         "px-1.5 py-0.5 rounded text-xs font-medium border",
                         getConfidenceColor(
-                          opportunity.metrics?.confidence
-                            ? opportunity.metrics.confidence >= 80
+                          opportunity.risk?.score
+                            ? opportunity.risk.score >= 80
                               ? "HIGH"
-                              : opportunity.metrics.confidence >= 60
-                              ? "MEDIUM"
-                              : "LOW"
-                            : "MEDIUM"
-                        )
+                              : opportunity.risk.score >= 60
+                                ? "MEDIUM"
+                                : "LOW"
+                            : "MEDIUM",
+                        ),
                       )}
                     >
-                      {opportunity.metrics?.confidence
-                        ? opportunity.metrics.confidence >= 80
+                      {opportunity.risk?.score
+                        ? opportunity.risk.score >= 80
                           ? "HIGH"
-                          : opportunity.metrics.confidence >= 60
-                          ? "MEDIUM"
-                          : "LOW"
+                          : opportunity.risk.score >= 60
+                            ? "MEDIUM"
+                            : "LOW"
                         : "MEDIUM"}
                     </div>
                   </div>

@@ -29,12 +29,13 @@ export function Navbar({ wsConnectionStatus = "disconnected", onRefresh, stats }
     const interval = setInterval(() => {
       setCountdown((prevCountdown) => {
         if (prevCountdown <= 1) {
-          onRefresh();
+          // Use setTimeout to avoid calling onRefresh during render
+          setTimeout(() => onRefresh(), 10);
           return refreshIntervalSeconds; // Reset countdown
         }
         return prevCountdown - 1;
       });
-    }, 1000);
+    }, 1_000);
 
     return () => clearInterval(interval);
   }, [onRefresh]);
